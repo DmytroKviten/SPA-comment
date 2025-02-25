@@ -47,12 +47,23 @@ return new class extends Migration
 
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_profile_id');
+            // Поле для вкладеності:
+            $table->foreignId('parent_id')->nullable()->constrained('comments')->cascadeOnDelete();
+        
+            // Якщо ви використовуєте user_profile_id:
+            $table->unsignedBigInteger('user_profile_id')->nullable();
+            $table->foreign('user_profile_id')->references('id')->on('user_profiles')->onDelete('cascade');
+        
+            // Якщо код вимагає зберігати окремо user_name, email, home_page:
+            $table->string('user_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('home_page')->nullable();
+        
             $table->text('text');
             $table->string('attachment_path')->nullable();
+            $table->string('attachment_type')->nullable();
+        
             $table->timestamps();
-
-            $table->foreign('user_profile_id')->references('id')->on('user_profiles')->onDelete('cascade');
         });
     }
 
